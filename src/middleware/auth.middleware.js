@@ -1,5 +1,7 @@
-import jwt from 'jsonwebtoken'
+"use strict";
 
+import jwt from "jsonwebtoken";
+import prisma from "../database/db";
 
 /*
     -get token from header or cookie
@@ -8,6 +10,43 @@ import jwt from 'jsonwebtoken'
     -create a request object and assigne the user object to it
     -call next function
 */
-export const authenticateUser = async function(req, res, next){
+export const authenticateUser = async function (req, res, next) {
+  const token = req.cookies?.token || req.headers?.authorization.split(" ")[1];
 
-}
+  try {
+    if (!token) {
+      return res.status(400).json({
+        message: "invalid token",
+      });
+    }
+
+    const decode = jwt.decode(token);
+
+    if (!decode) {
+      return res.status(400).json({
+        message: "Decode failed",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: decode.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+      });
+    }
+
+    req.userId = user;
+
+    next();
+  } catch (error) {
+    throw error;
+  }
+};
