@@ -1,4 +1,6 @@
 import express from "express";
+import { authenticateUser } from "../middleware/auth.middleware";
+import { login, logout, signup } from "../controllers/auth.controller";
 
 const authRoute = express.Router();
 // register-->
@@ -6,9 +8,9 @@ const authRoute = express.Router();
 //logout-->
 //resetPassword-->
 
-authRoute.post("/register");
-authRoute.post("/login");
-authRoute.post("/logout");
+authRoute.post("/register", signup);
+authRoute.post("/login", authenticateUser, login);
+authRoute.post("/logout", authenticateUser, logout);
 authRoute.post("/reset-password");
 
 export default authRoute;
