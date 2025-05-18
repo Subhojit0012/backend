@@ -71,6 +71,8 @@ export const checkAdmin = async function (req, res, next) {
     if (!user || user.role !== "ADMIN") {
       return res.status(400).json({ user: user });
     }
+    
+    req.user = user;
 
     next();
   } catch (error) {
