@@ -134,7 +134,7 @@ export const logout = async function (req, res) {
   }
 
   try {
-    const user = await prisma.user.update({
+    await prisma.user.update({
       where: {
         id,
       },
