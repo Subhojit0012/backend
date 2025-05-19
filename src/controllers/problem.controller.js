@@ -61,22 +61,22 @@ export const createProblem = async function (req, res) {
           });
         }
       }
-
-      const problem = await prisma.user.create({
-        data: {
-          title,
-          description,
-          defficulty,
-          tags,
-          examples,
-          constrains,
-          hints,
-          editorial,
-          codeSnippet,
-          userId: req.user.id,
-        },
-      });
     }
+
+    const problem = await prisma.user.create({
+      data: {
+        title,
+        description,
+        defficulty,
+        tags,
+        examples,
+        constrains,
+        hints,
+        editorial,
+        codeSnippet,
+        userId: req.user.id,
+      },
+    });
 
     return res.status(200).json(problem);
   } catch (error) {
