@@ -1,9 +1,9 @@
-import prisma from "../database/db";
+import prisma from "../database/db.js";
 import {
   getJudge0LanguageId,
   submitBatch,
   poolBatchToken,
-} from "../utils/judge0.utils";
+} from "../utils/judge0.utils.js";
 
 export const createProblem = async function (req, res) {
   // get data from req body

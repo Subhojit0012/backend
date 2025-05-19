@@ -1,7 +1,7 @@
 "use strict";
 
 import jwt from "jsonwebtoken";
-import prisma from "../database/db";
+import prisma from "../database/db.js";
 
 /*
     -get token from header or cookie
