@@ -52,7 +52,7 @@ export const authenticateUser = async function (req, res, next) {
 };
 
 export const checkAdmin = async function (req, res, next) {
-  const id = req.userId;
+  const id = req.userId.id;
 
   if (!id) {
     return res.status(400).json({ id: id });
@@ -68,10 +68,10 @@ export const checkAdmin = async function (req, res, next) {
       },
     });
 
-    if (!user || user.role !== "ADMIN") {
+    if (user.role !== "ADMIN") {
       return res.status(400).json({ user: user });
     }
-    
+
     req.user = user;
 
     next();
