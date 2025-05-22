@@ -23,6 +23,7 @@ export const createProblem = async function (req, res) {
 
   // check if the user is admin
   const role = req.user.role;
+
   if (role !== "ADMIN") {
     return res.status(400).json({
       message: "You are not allowed to create a problem",
@@ -31,13 +32,16 @@ export const createProblem = async function (req, res) {
 
   try {
     for (const [language, solutionCode] of Object.entries(referanceSolution)) {
-      const languageId = getJudge0LanguageId(language);
+      // get the language id
+      const languageId =await getJudge0LanguageId(language);
+      // check the correct id
       if (languageId === 0) {
         return res.status(400).json({
           message: `Language ${language} is not supported`,
         });
       }
 
+      // create the submission
       const submission = testcases.map(({ input, output }) => ({
         source_code: solutionCode,
         language_id: languageId,
@@ -45,8 +49,12 @@ export const createProblem = async function (req, res) {
         expected_output: output,
       }));
 
+      console.log("Submission: ", submission); // !
+
+      // submission data in array format
       const data = await submitBatch(submission);
 
+      // extract the token from the data
       const tokens = data.map((res) => res.token);
 
       const results = await poolBatchToken(tokens);
@@ -63,6 +71,7 @@ export const createProblem = async function (req, res) {
       }
     }
 
+    // create problem in database
     const problem = await prisma.user.create({
       data: {
         title,

@@ -31,10 +31,12 @@ export const signup = async function (req, res) {
 
     // create the user
     const user = await prisma.user.create({
-      email,
-      password: hashPass,
-      firstname,
-      lastname,
+      data: {
+        email,
+        password: hashPass,
+        firstname,
+        lastname,
+      },
     });
 
     if (!user) {
@@ -62,19 +64,11 @@ export const signup = async function (req, res) {
       .status(200)
       .json({ message: "user created successfull" });
   } catch (error) {
-    if (error instanceof Error) {
-      return error;
-    }
+    throw error;
   }
 };
 
 export const login = async function (req, res) {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ message: "Invalid credentials" });
-  }
-
   /*
   -- try to find the user
   -- if not found then return a message that the user is not found
@@ -84,11 +78,18 @@ export const login = async function (req, res) {
   -- if not work throw an error
   */
   try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
     const user = await prisma.user.findUnique({
       where: {
         email,
       },
       select: {
+        id: true,
         isLoggedin: true,
       },
     });
