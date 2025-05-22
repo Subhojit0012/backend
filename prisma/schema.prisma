@@ -15,16 +15,17 @@ datasource db {
 }
 
 model User {
-  id         String    @id @unique()
-  firstname  String
-  lastname   String
-  password   String    @unique
-  email      String    @unique
-  isLoggedin Boolean   @default(false)
-  createdAt  DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt  DateTime  @updatedAt
-  role       Role      @default(USER)
-  problems   Problem[]
+  id            String          @id @unique() @default(uuid())
+  firstname     String
+  lastname      String
+  password      String          @unique
+  email         String          @unique
+  isLoggedin    Boolean         @default(false)
+  createdAt     DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime        @updatedAt
+  role          Role            @default(USER)
+  problems      Problem[]
+  SolvedProblem SolvedProblem[]
 }
 
 enum Role {
@@ -51,11 +52,22 @@ model Problem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  SolvedProblem SolvedProblem[]
+}
+
+model SolvedProblem {
+  id        String   @id @unique() @default(uuid())
+  userId    String
+  problemId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem   Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
 }
 
 enum Defficulty {
   EASY
   MEDIUM
-  HARDJ
+  HARD
 }
